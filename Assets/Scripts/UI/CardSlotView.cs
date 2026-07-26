@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -26,6 +27,8 @@ namespace CountdownAutoBattle.UI
 
         private PointCardView currentCard;
 
+        public event Action<CardSlotView> CardChanged;
+
         public CardSlotType SlotType => slotType;
 
         public PointCardView CurrentCard => currentCard;
@@ -44,28 +47,30 @@ namespace CountdownAutoBattle.UI
         {
             currentCard = card;
 
-            if (card == null)
+            if (card != null)
             {
-                return;
+                card.transform.SetParent(transform, false);
+
+                RectTransform cardRect = card.RectTransform;
+
+                cardRect.anchorMin = Vector2.zero;
+                cardRect.anchorMax = Vector2.one;
+                cardRect.offsetMin = Vector2.zero;
+                cardRect.offsetMax = Vector2.zero;
+                cardRect.localScale = Vector3.one;
+
+                card.SetCurrentSlot(this);
             }
 
-            card.transform.SetParent(transform, false);
-
-            RectTransform cardRect = card.RectTransform;
-
-            cardRect.anchorMin = Vector2.zero;
-            cardRect.anchorMax = Vector2.one;
-            cardRect.offsetMin = Vector2.zero;
-            cardRect.offsetMax = Vector2.zero;
-            cardRect.localScale = Vector3.one;
-
-            card.SetCurrentSlot(this);
+            CardChanged?.Invoke(this);
         }
 
         public PointCardView RemoveCard()
         {
             PointCardView removedCard = currentCard;
             currentCard = null;
+
+            CardChanged?.Invoke(this);
 
             return removedCard;
         }
