@@ -33,7 +33,7 @@ namespace CountdownAutoBattle.UI
 
         public EquipmentDefinition Definition => definition;
 
-        public bool IsEnabled { get; private set; }
+        public bool IsActivated { get; private set; }
 
         public int CurrentEffectValue { get; private set; }
 
@@ -96,10 +96,10 @@ namespace CountdownAutoBattle.UI
 
         private void RefreshCalculatedValues()
         {
-            IsEnabled = TryGetCardValues(
+            IsActivated = TryGetCardValues(
                 out List<int> values);
 
-            if (!IsEnabled)
+            if (!IsActivated)
             {
                 CurrentEffectValue = 0;
                 CurrentCycleValue = 0;

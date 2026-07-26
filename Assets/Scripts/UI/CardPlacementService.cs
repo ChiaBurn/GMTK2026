@@ -3,14 +3,29 @@ using UnityEngine;
 namespace CountdownAutoBattle.UI
 {
     /// <summary>
-    /// 點卡移動、交換與點擊配置的唯一修改入口。
+    /// 點數卡移動、交換與點擊配置的唯一修改入口。
+    ///
+    /// 支援：
+    /// - 拖曳至空槽
+    /// - 拖曳交換
+    /// - 點擊卡片後點擊空槽
+    /// - 點擊 A 卡後點擊 B 卡直接交換
+    /// - 遊戲階段切換時鎖定互動
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class CardPlacementService : MonoBehaviour
     {
-        public static CardPlacementService Instance { get; private set; }
+        public static CardPlacementService Instance
+        {
+            get;
+            private set;
+        }
 
         private PointCardView selectedCard;
+        private bool isInteractionEnabled = true;
+
+        public bool IsInteractionEnabled =>
+            isInteractionEnabled;
 
         private void Awake()
         {
@@ -35,16 +50,38 @@ namespace CountdownAutoBattle.UI
             }
         }
 
-        public void HandleCardClicked(PointCardView clickedCard)
+        public void SetInteractionEnabled(bool enabled)
         {
-            if (clickedCard == null)
+            isInteractionEnabled = enabled;
+
+            if (!enabled)
+            {
+                ClearSelection();
+            }
+
+            PointCardView[] cards =
+                FindObjectsByType<PointCardView>(
+                    FindObjectsInactive.Exclude,
+                    FindObjectsSortMode.None);
+
+            foreach (PointCardView card in cards)
+            {
+                card.SetInteractionEnabled(enabled);
+            }
+        }
+
+        public void HandleCardClicked(
+            PointCardView clickedCard)
+        {
+            if (!isInteractionEnabled ||
+                clickedCard == null)
             {
                 return;
             }
 
             /*
-             * 尚未選取任何卡片：
-             * 將本次點擊的卡片設為選取狀態。
+             * 尚未選取卡片：
+             * 選取本次點擊的卡片。
              */
             if (selectedCard == null)
             {
@@ -64,12 +101,11 @@ namespace CountdownAutoBattle.UI
 
             /*
              * 已選取 A 卡，再點擊 B 卡：
-             * 將 A 卡移動到 B 卡所在槽位。
-             *
-             * TryPlaceCard 會偵測目標槽已有 B 卡，
-             * 並把 B 卡放回 A 卡原本的槽位，因此形成交換。
+             * 以 B 卡所在槽位作為目標，
+             * 交由 TryPlaceCard 完成交換。
              */
-            CardSlotView targetSlot = clickedCard.CurrentSlot;
+            CardSlotView targetSlot =
+                clickedCard.CurrentSlot;
 
             if (targetSlot == null)
             {
@@ -81,19 +117,27 @@ namespace CountdownAutoBattle.UI
                 return;
             }
 
-            TryPlaceCard(selectedCard, targetSlot);
+            TryPlaceCard(
+                selectedCard,
+                targetSlot);
+
             ClearSelection();
         }
 
-        public void HandleSlotClicked(CardSlotView targetSlot)
+        public void HandleSlotClicked(
+            CardSlotView targetSlot)
         {
-            if (selectedCard == null ||
+            if (!isInteractionEnabled ||
+                selectedCard == null ||
                 targetSlot == null)
             {
                 return;
             }
 
-            TryPlaceCard(selectedCard, targetSlot);
+            TryPlaceCard(
+                selectedCard,
+                targetSlot);
+
             ClearSelection();
         }
 
@@ -101,7 +145,8 @@ namespace CountdownAutoBattle.UI
             PointCardView movingCard,
             CardSlotView targetSlot)
         {
-            if (movingCard == null ||
+            if (!isInteractionEnabled ||
+                movingCard == null ||
                 targetSlot == null)
             {
                 return false;
@@ -124,6 +169,10 @@ namespace CountdownAutoBattle.UI
 
             targetSlot.SetCard(movingCard);
 
+            /*
+             * 目標槽原本已有卡片時，
+             * 將該卡片放回來源槽，形成交換。
+             */
             if (displacedCard != null)
             {
                 if (sourceSlot == null)

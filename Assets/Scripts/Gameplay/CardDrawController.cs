@@ -1,17 +1,19 @@
 using System.Collections.Generic;
 using CountdownAutoBattle.UI;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace CountdownAutoBattle.Gameplay
 {
+    /// <summary>
+    /// 管理本次 Run 的點數卡牌庫，以及將點數卡抽至卡池的行為。
+    ///
+    /// 此元件不直接監聽 UI Button；
+    /// 關卡流程與按鈕操作由 GameFlowController 負責。
+    /// </summary>
     [DisallowMultipleComponent]
     public sealed class CardDrawController : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField]
-        private Button drawButton;
-
         [SerializeField]
         private PointCardView pointCardPrefab;
 
@@ -21,7 +23,6 @@ namespace CountdownAutoBattle.Gameplay
         private readonly List<PointCardInstance> drawPile = new();
 
         private int nextInstanceId = 1;
-        private bool hasDrawn;
 
         private static readonly int[] InitialCardValues =
         {
@@ -29,51 +30,34 @@ namespace CountdownAutoBattle.Gameplay
             3, 4, 4, 5, 6
         };
 
+        public int DrawPileCount => drawPile.Count;
+
+        public IReadOnlyList<CardSlotView> PoolSlots => poolSlots;
+
         private void Awake()
         {
             ValidateReferences();
             CreateInitialDeck();
         }
 
-        private void OnEnable()
+        /// <summary>
+        /// 從剩餘牌庫抽卡，填滿所有空的卡池槽。
+        /// 回傳實際抽出的卡片數量。
+        /// </summary>
+        public int DrawToFillPool()
         {
-            if (drawButton != null)
-            {
-                drawButton.onClick.AddListener(HandleDrawClicked);
-            }
-        }
+            int emptySlotCount = CountEmptyPoolSlots();
 
-        private void OnDisable()
-        {
-            if (drawButton != null)
-            {
-                drawButton.onClick.RemoveListener(HandleDrawClicked);
-            }
-        }
+            int drawCount = Mathf.Min(
+                emptySlotCount,
+                drawPile.Count);
 
-        private void ValidateReferences()
-        {
-            if (drawButton == null)
+            for (int i = 0; i < drawCount; i++)
             {
-                Debug.LogError(
-                    "Draw Button is not assigned.",
-                    this);
+                DrawOneCard();
             }
 
-            if (pointCardPrefab == null)
-            {
-                Debug.LogError(
-                    "Point Card Prefab is not assigned.",
-                    this);
-            }
-
-            if (poolSlots.Count != 5)
-            {
-                Debug.LogError(
-                    $"Pool Slots must contain exactly 5 entries. " +
-                    $"Current count: {poolSlots.Count}",
-                    this);
-            }
+            return drawCount;
         }
 
         private void CreateInitialDeck()
@@ -90,39 +74,19 @@ namespace CountdownAutoBattle.Gameplay
             }
         }
 
-        private void HandleDrawClicked()
+        private int CountEmptyPoolSlots()
         {
-            if (hasDrawn)
-            {
-                return;
-            }
-
-            int emptySlotCount = 0;
+            int count = 0;
 
             foreach (CardSlotView slot in poolSlots)
             {
                 if (slot != null && slot.IsEmpty)
                 {
-                    emptySlotCount++;
+                    count++;
                 }
             }
 
-            int drawCount =
-                Mathf.Min(
-                    emptySlotCount,
-                    drawPile.Count);
-
-            for (int i = 0; i < drawCount; i++)
-            {
-                DrawOneCard();
-            }
-
-            hasDrawn = true;
-
-            if (drawButton != null)
-            {
-                drawButton.interactable = false;
-            }
+            return count;
         }
 
         private void DrawOneCard()
@@ -131,8 +95,7 @@ namespace CountdownAutoBattle.Gameplay
                 poolSlots.Find(slot =>
                     slot != null && slot.IsEmpty);
 
-            if (targetSlot == null ||
-                drawPile.Count == 0)
+            if (targetSlot == null || drawPile.Count == 0)
             {
                 return;
             }
@@ -152,6 +115,34 @@ namespace CountdownAutoBattle.Gameplay
 
             cardView.Bind(cardData);
             targetSlot.SetCard(cardView);
+        }
+
+        private void ValidateReferences()
+        {
+            if (pointCardPrefab == null)
+            {
+                Debug.LogError(
+                    "Point Card Prefab is not assigned.",
+                    this);
+            }
+
+            if (poolSlots.Count != 5)
+            {
+                Debug.LogError(
+                    $"Pool Slots must contain exactly 5 entries. " +
+                    $"Current count: {poolSlots.Count}",
+                    this);
+            }
+
+            for (int i = 0; i < poolSlots.Count; i++)
+            {
+                if (poolSlots[i] == null)
+                {
+                    Debug.LogError(
+                        $"Pool slot at index {i} is not assigned.",
+                        this);
+                }
+            }
         }
     }
 }
