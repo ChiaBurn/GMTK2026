@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 341831308}
   - component: {fileID: 341831307}
   - component: {fileID: 341831306}
+  - component: {fileID: 341831309}
   m_Layer: 5
   m_Name: PoolSlot04
   m_TagString: Untagged
@@ -215,6 +216,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 341831304}
   m_CullTransparentMesh: 1
+--- !u!114 &341831309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 341831304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd25ebff26d59f24f99810f03c83c679, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CountdownAutoBattle.UI.CardSlotView
+  slotType: 0
+  background: {fileID: 341831307}
 --- !u!1 &511639003
 GameObject:
   m_ObjectHideFlags: 0
@@ -287,7 +302,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.10196079, g: 0.10196079, b: 0.10196079, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -461,6 +476,7 @@ GameObject:
   - component: {fileID: 588609870}
   - component: {fileID: 588609869}
   - component: {fileID: 588609868}
+  - component: {fileID: 588609871}
   m_Layer: 5
   m_Name: AttackSlot02
   m_TagString: Untagged
@@ -545,6 +561,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 588609866}
   m_CullTransparentMesh: 1
+--- !u!114 &588609871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 588609866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd25ebff26d59f24f99810f03c83c679, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CountdownAutoBattle.UI.CardSlotView
+  slotType: 1
+  background: {fileID: 588609869}
 --- !u!1 &668903634
 GameObject:
   m_ObjectHideFlags: 0
@@ -557,6 +587,7 @@ GameObject:
   - component: {fileID: 668903638}
   - component: {fileID: 668903637}
   - component: {fileID: 668903636}
+  - component: {fileID: 668903639}
   m_Layer: 5
   m_Name: PoolSlot01
   m_TagString: Untagged
@@ -641,6 +672,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 668903634}
   m_CullTransparentMesh: 1
+--- !u!114 &668903639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 668903634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd25ebff26d59f24f99810f03c83c679, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CountdownAutoBattle.UI.CardSlotView
+  slotType: 0
+  background: {fileID: 668903637}
 --- !u!1 &844548654
 GameObject:
   m_ObjectHideFlags: 0
@@ -653,9 +698,8 @@ GameObject:
   - component: {fileID: 844548658}
   - component: {fileID: 844548657}
   - component: {fileID: 844548656}
-  - component: {fileID: 844548659}
   m_Layer: 5
-  m_Name: InteractionTestButton
+  m_Name: DrawButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -763,19 +807,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 844548654}
   m_CullTransparentMesh: 1
---- !u!114 &844548659
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 844548654}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39497ec4d21396a4e9ae4ddc52bba970, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CountdownAutoBattle.UI.InteractionTestButton
-  label: {fileID: 1388272942}
 --- !u!1 &907889469
 GameObject:
   m_ObjectHideFlags: 0
@@ -1028,6 +1059,7 @@ GameObject:
   - component: {fileID: 1248205930}
   - component: {fileID: 1248205929}
   - component: {fileID: 1248205928}
+  - component: {fileID: 1248205931}
   m_Layer: 5
   m_Name: ShieldSlot01
   m_TagString: Untagged
@@ -1112,6 +1144,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1248205926}
   m_CullTransparentMesh: 1
+--- !u!114 &1248205931
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1248205926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd25ebff26d59f24f99810f03c83c679, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CountdownAutoBattle.UI.CardSlotView
+  slotType: 1
+  background: {fileID: 1248205929}
 --- !u!1 &1278493879
 GameObject:
   m_ObjectHideFlags: 0
@@ -1188,6 +1234,7 @@ GameObject:
   - component: {fileID: 1285433619}
   - component: {fileID: 1285433618}
   - component: {fileID: 1285433617}
+  - component: {fileID: 1285433620}
   m_Layer: 5
   m_Name: ShieldSlot02
   m_TagString: Untagged
@@ -1272,6 +1319,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1285433615}
   m_CullTransparentMesh: 1
+--- !u!114 &1285433620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1285433615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd25ebff26d59f24f99810f03c83c679, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CountdownAutoBattle.UI.CardSlotView
+  slotType: 1
+  background: {fileID: 1285433618}
 --- !u!1 &1296864979
 GameObject:
   m_ObjectHideFlags: 0
@@ -1347,6 +1408,54 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1296864979}
   m_CullTransparentMesh: 1
+--- !u!1 &1316529550
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1316529551}
+  - component: {fileID: 1316529552}
+  m_Layer: 5
+  m_Name: CardPlacementService
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1316529551
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1316529550}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2039180330}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1316529552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1316529550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5812f38f8676934db90ec2a225c5f33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CountdownAutoBattle.UI.CardPlacementService
 --- !u!1 &1388272940
 GameObject:
   m_ObjectHideFlags: 0
@@ -1404,7 +1513,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: TOUCH TEST
+  m_text: DRAW
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1484,6 +1593,62 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1388272940}
   m_CullTransparentMesh: 1
+--- !u!1 &1410357035
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1410357036}
+  - component: {fileID: 1410357037}
+  m_Layer: 5
+  m_Name: CardDrawController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1410357036
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1410357035}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2039180330}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1410357037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1410357035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17f50c065082ee44b9f2bc7c770aeb72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CountdownAutoBattle.Gameplay.CardDrawController
+  drawButton: {fileID: 844548656}
+  pointCardPrefab: {fileID: 1203167966676461652, guid: 1c127d60006520e44a29908c92676f23, type: 3}
+  poolSlots:
+  - {fileID: 668903639}
+  - {fileID: 1694254365}
+  - {fileID: 2129592893}
+  - {fileID: 341831309}
+  - {fileID: 2049386714}
 --- !u!1 &1421460086
 GameObject:
   m_ObjectHideFlags: 0
@@ -1770,6 +1935,7 @@ GameObject:
   - component: {fileID: 1508557926}
   - component: {fileID: 1508557925}
   - component: {fileID: 1508557924}
+  - component: {fileID: 1508557927}
   m_Layer: 5
   m_Name: AttackSlot01
   m_TagString: Untagged
@@ -1854,6 +2020,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1508557922}
   m_CullTransparentMesh: 1
+--- !u!114 &1508557927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1508557922}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd25ebff26d59f24f99810f03c83c679, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CountdownAutoBattle.UI.CardSlotView
+  slotType: 1
+  background: {fileID: 1508557925}
 --- !u!1 &1547942637
 GameObject:
   m_ObjectHideFlags: 0
@@ -1991,7 +2171,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.10196079, g: 0.10196079, b: 0.10196079, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2098,6 +2278,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 2039180330}
   - {fileID: 2083717313}
   - {fileID: 1421460087}
   m_Father: {fileID: 1616587363}
@@ -2157,6 +2338,7 @@ GameObject:
   - component: {fileID: 1694254364}
   - component: {fileID: 1694254363}
   - component: {fileID: 1694254362}
+  - component: {fileID: 1694254365}
   m_Layer: 5
   m_Name: PoolSlot02
   m_TagString: Untagged
@@ -2241,6 +2423,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1694254360}
   m_CullTransparentMesh: 1
+--- !u!114 &1694254365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1694254360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd25ebff26d59f24f99810f03c83c679, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CountdownAutoBattle.UI.CardSlotView
+  slotType: 0
+  background: {fileID: 1694254363}
 --- !u!1 &1836635728
 GameObject:
   m_ObjectHideFlags: 0
@@ -2491,6 +2687,43 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1 &2039180329
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2039180330}
+  m_Layer: 5
+  m_Name: Systems
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2039180330
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2039180329}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1316529551}
+  - {fileID: 1410357036}
+  m_Father: {fileID: 1682141378}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2049386709
 GameObject:
   m_ObjectHideFlags: 0
@@ -2503,6 +2736,7 @@ GameObject:
   - component: {fileID: 2049386713}
   - component: {fileID: 2049386712}
   - component: {fileID: 2049386711}
+  - component: {fileID: 2049386714}
   m_Layer: 5
   m_Name: PoolSlot05
   m_TagString: Untagged
@@ -2587,6 +2821,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2049386709}
   m_CullTransparentMesh: 1
+--- !u!114 &2049386714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2049386709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd25ebff26d59f24f99810f03c83c679, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CountdownAutoBattle.UI.CardSlotView
+  slotType: 0
+  background: {fileID: 2049386712}
 --- !u!1 &2083717312
 GameObject:
   m_ObjectHideFlags: 0
@@ -2665,6 +2913,7 @@ GameObject:
   - component: {fileID: 2129592892}
   - component: {fileID: 2129592891}
   - component: {fileID: 2129592890}
+  - component: {fileID: 2129592893}
   m_Layer: 5
   m_Name: PoolSlot03
   m_TagString: Untagged
@@ -2749,6 +2998,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2129592888}
   m_CullTransparentMesh: 1
+--- !u!114 &2129592893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2129592888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd25ebff26d59f24f99810f03c83c679, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CountdownAutoBattle.UI.CardSlotView
+  slotType: 0
+  background: {fileID: 2129592891}
 --- !u!1 &2143538615
 GameObject:
   m_ObjectHideFlags: 0
