@@ -9,7 +9,7 @@ using UnityEngine;
 namespace CountdownAutoBattle.Gameplay
 {
     /// <summary>
-    /// 控制單一關卡的自動戰鬥回合。
+    /// 控制單一關卡的自動戰鬥、倒數與 UI 更新。
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class CombatController :
@@ -24,9 +24,20 @@ namespace CountdownAutoBattle.Gameplay
         private List<EquipmentView> equipmentViews =
             new();
 
-        [Header("UI")]
+        [Header("Main UI")]
         [SerializeField]
         private TMP_Text roundText;
+
+        [SerializeField]
+        private CombatantView playerView;
+
+        [SerializeField]
+        private CombatantView enemyView;
+
+        [Header("Enemy Action UI")]
+        [SerializeField]
+        private List<EnemyActionView> enemyActionViews =
+            new();
 
         [Header("Player Initial State")]
         [SerializeField, Min(1)]
@@ -132,6 +143,32 @@ namespace CountdownAutoBattle.Gameplay
             isRunning = false;
         }
 
+        public void ResetCombat()
+        {
+            StopCombat();
+
+            currentRound = 0;
+            playerState = null;
+            enemyState = null;
+
+            equipmentRuntimes.Clear();
+            enemyActionRuntimes.Clear();
+
+            if (roundText != null)
+            {
+                roundText.text = "DRAW";
+            }
+
+            playerView?.ResetView();
+            enemyView?.ResetView();
+
+            foreach (EnemyActionView actionView
+                     in enemyActionViews)
+            {
+                actionView?.Clear();
+            }
+        }
+
         private void OnDisable()
         {
             StopCombat();
@@ -161,6 +198,24 @@ namespace CountdownAutoBattle.Gameplay
                         enemyDefinition
                             .InitialShield);
 
+            InitializeEquipmentRuntimes();
+            InitializeEnemyActionRuntimes();
+            InitializeCombatViews();
+
+            UpdateRoundDisplay();
+            RefreshCombatantViews();
+
+            Debug.Log(
+                $"Combat started | " +
+                $"Player HP: {playerState.CurrentHp}, " +
+                $"Enemy HP: {enemyState.CurrentHp}, " +
+                $"Activated equipment: " +
+                $"{equipmentRuntimes.Count}",
+                this);
+        }
+
+        private void InitializeEquipmentRuntimes()
+        {
             equipmentRuntimes.Clear();
 
             List<EquipmentView> sortedEquipment =
@@ -168,8 +223,26 @@ namespace CountdownAutoBattle.Gameplay
 
             sortedEquipment.Sort(
                 (left, right) =>
-                    left.DisplayOrder.CompareTo(
-                        right.DisplayOrder));
+                {
+                    if (left == null &&
+                        right == null)
+                    {
+                        return 0;
+                    }
+
+                    if (left == null)
+                    {
+                        return 1;
+                    }
+
+                    if (right == null)
+                    {
+                        return -1;
+                    }
+
+                    return left.DisplayOrder.CompareTo(
+                        right.DisplayOrder);
+                });
 
             foreach (EquipmentView equipment
                      in sortedEquipment)
@@ -182,7 +255,10 @@ namespace CountdownAutoBattle.Gameplay
                             equipment));
                 }
             }
+        }
 
+        private void InitializeEnemyActionRuntimes()
+        {
             enemyActionRuntimes.Clear();
 
             for (int i = 0;
@@ -192,32 +268,57 @@ namespace CountdownAutoBattle.Gameplay
                 EnemyActionDefinition action =
                     enemyDefinition.Actions[i];
 
-                if (action != null)
+                if (action == null)
                 {
-                    enemyActionRuntimes.Add(
-                        new EnemyActionRuntime(
-                            action,
-                            displayOrder: i));
+                    continue;
+                }
+
+                enemyActionRuntimes.Add(
+                    new EnemyActionRuntime(
+                        action,
+                        displayOrder: i));
+            }
+        }
+
+        private void InitializeCombatViews()
+        {
+            playerView?.SetDisplayName("PLAYER");
+
+            enemyView?.SetDisplayName(
+                enemyDefinition.DisplayName);
+
+            for (int i = 0;
+                 i < enemyActionViews.Count;
+                 i++)
+            {
+                EnemyActionView actionView =
+                    enemyActionViews[i];
+
+                if (actionView == null)
+                {
+                    continue;
+                }
+
+                if (i <
+                    enemyActionRuntimes.Count)
+                {
+                    actionView.gameObject
+                        .SetActive(true);
+
+                    actionView.Bind(
+                        enemyActionRuntimes[i]);
+                }
+                else
+                {
+                    actionView.Clear();
+                    actionView.gameObject
+                        .SetActive(false);
                 }
             }
-
-            UpdateRoundDisplay();
-
-            Debug.Log(
-                $"Combat started | " +
-                $"Player HP: {playerState.CurrentHp}, " +
-                $"Enemy HP: {enemyState.CurrentHp}, " +
-                $"Activated equipment: " +
-                $"{equipmentRuntimes.Count}",
-                this);
         }
 
         private IEnumerator RunCombatRoutine()
         {
-            /*
-             * 回合 0 先呈現初始倒數狀態，
-             * 經過第一段間隔後才進入回合 1。
-             */
             yield return new WaitForSeconds(
                 GetRoundInterval(currentRound));
 
@@ -228,6 +329,10 @@ namespace CountdownAutoBattle.Gameplay
 
                 CombatResolutionResult result =
                     ResolveCurrentRound();
+
+                RefreshCombatantViews();
+                RefreshEnemyActionViews();
+                PlayResolutionFeedback(result);
 
                 RoundChanged?.Invoke(currentRound);
 
@@ -307,11 +412,9 @@ namespace CountdownAutoBattle.Gameplay
                     continue;
                 }
 
-                PendingEffect effect =
+                pendingEffects.Add(
                     CreateEnemyPendingEffect(
-                        runtime);
-
-                pendingEffects.Add(effect);
+                        runtime));
             }
 
             return CombatResolver.ResolveRound(
@@ -320,9 +423,8 @@ namespace CountdownAutoBattle.Gameplay
                 pendingEffects);
         }
 
-        private PendingEffect
-            CreateEnemyPendingEffect(
-                EnemyActionRuntime runtime)
+        private PendingEffect CreateEnemyPendingEffect(
+            EnemyActionRuntime runtime)
         {
             EnemyActionDefinition definition =
                 runtime.Definition;
@@ -356,8 +458,43 @@ namespace CountdownAutoBattle.Gameplay
                     runtime.DisplayOrder);
         }
 
-        private float GetRoundInterval(
-            int round)
+        private void RefreshCombatantViews()
+        {
+            playerView?.Refresh(playerState);
+            enemyView?.Refresh(enemyState);
+        }
+
+        private void RefreshEnemyActionViews()
+        {
+            foreach (EnemyActionView actionView
+                     in enemyActionViews)
+            {
+                if (actionView != null &&
+                    actionView.gameObject.activeSelf)
+                {
+                    actionView.RefreshCountdown();
+                }
+            }
+        }
+
+        private void PlayResolutionFeedback(
+            CombatResolutionResult result)
+        {
+            foreach (CombatResolutionRecord record
+                     in result.Records)
+            {
+                CombatantView targetView =
+                    record.Effect.TargetSide ==
+                    CombatSide.Player
+                        ? playerView
+                        : enemyView;
+
+                targetView?.PlayEffectFeedback(
+                    record.Effect.EffectType);
+            }
+        }
+
+        private float GetRoundInterval(int round)
         {
             if (round > finalRoundThreshold)
             {
@@ -391,6 +528,8 @@ namespace CountdownAutoBattle.Gameplay
             isRunning = false;
             combatRoutine = null;
 
+            RefreshCombatantViews();
+
             Debug.Log(
                 playerWon
                     ? "Combat finished: PLAYER WIN."
@@ -415,31 +554,19 @@ namespace CountdownAutoBattle.Gameplay
                 $"Shield: {enemyState.Shield} | " +
                 $"Effects: {result.Records.Count}",
                 this);
-
-            foreach (
-                CombatResolutionRecord record
-                in result.Records)
-            {
-                Debug.Log(
-                    $"  {record.Effect} | " +
-                    $"HP {record.HpBefore}" +
-                    $"→{record.HpAfter}, " +
-                    $"Shield " +
-                    $"{record.ShieldBefore}" +
-                    $"→{record.ShieldAfter}",
-                    this);
-            }
         }
 
         private bool ValidateConfiguration()
         {
+            bool valid = true;
+
             if (enemyDefinition == null)
             {
                 Debug.LogError(
                     "Enemy Definition is not assigned.",
                     this);
 
-                return false;
+                valid = false;
             }
 
             if (roundText == null)
@@ -448,7 +575,25 @@ namespace CountdownAutoBattle.Gameplay
                     "Round Text is not assigned.",
                     this);
 
-                return false;
+                valid = false;
+            }
+
+            if (playerView == null)
+            {
+                Debug.LogError(
+                    "Player View is not assigned.",
+                    this);
+
+                valid = false;
+            }
+
+            if (enemyView == null)
+            {
+                Debug.LogError(
+                    "Enemy View is not assigned.",
+                    this);
+
+                valid = false;
             }
 
             if (equipmentViews.Count == 0)
@@ -457,10 +602,21 @@ namespace CountdownAutoBattle.Gameplay
                     "No Equipment Views assigned.",
                     this);
 
-                return false;
+                valid = false;
             }
 
-            return true;
+            if (enemyActionViews.Count <
+                enemyDefinition.Actions.Count)
+            {
+                Debug.LogError(
+                    "There are fewer Enemy Action Views " +
+                    "than Enemy Actions.",
+                    this);
+
+                valid = false;
+            }
+
+            return valid;
         }
     }
 }
