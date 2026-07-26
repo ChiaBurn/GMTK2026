@@ -806,6 +806,7 @@ MonoBehaviour:
   formulaText: {fileID: 776341462}
   effectValueText: {fileID: 776198577}
   cycleValueText: {fileID: 80192619}
+  displayOrder: 2
 --- !u!114 &245636826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -915,6 +916,7 @@ MonoBehaviour:
   primaryButton: {fileID: 844548656}
   primaryButtonLabel: {fileID: 1388272942}
   cardDrawController: {fileID: 1410357037}
+  combatController: {fileID: 1337575817}
   currentPhase: 0
 --- !u!1 &316270773
 GameObject:
@@ -2212,6 +2214,7 @@ MonoBehaviour:
   formulaText: {fileID: 196991393}
   effectValueText: {fileID: 1417371484}
   cycleValueText: {fileID: 1407566842}
+  displayOrder: 1
 --- !u!114 &570916995
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4539,6 +4542,70 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5812f38f8676934db90ec2a225c5f33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CountdownAutoBattle.UI.CardPlacementService
+--- !u!1 &1337575815
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1337575816}
+  - component: {fileID: 1337575817}
+  m_Layer: 5
+  m_Name: CombatController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1337575816
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1337575815}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2039180330}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1337575817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1337575815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f29bcb5372381b47a048e21457a29fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CountdownAutoBattle.Gameplay.CombatController
+  enemyDefinition: {fileID: 11400000, guid: 1378ff735ead1104eb9e0f40bc0e51c9, type: 2}
+  equipmentViews:
+  - {fileID: 1592561949}
+  - {fileID: 570916994}
+  - {fileID: 245636825}
+  roundText: {fileID: 1388272942}
+  playerMaxHp: 40
+  playerInitialShield: 0
+  earlyRoundInterval: 1
+  middleRoundInterval: 0.75
+  lateRoundInterval: 0.5
+  finalRoundInterval: 0.35
+  middleRoundThreshold: 20
+  lateRoundThreshold: 35
+  finalRoundThreshold: 50
+  maximumRound: 300
 --- !u!1 &1377670538
 GameObject:
   m_ObjectHideFlags: 0
@@ -6190,6 +6257,7 @@ MonoBehaviour:
   formulaText: {fileID: 419439748}
   effectValueText: {fileID: 1051760320}
   cycleValueText: {fileID: 1563754518}
+  displayOrder: 0
 --- !u!114 &1592561950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7000,55 +7068,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1873833806}
   m_CullTransparentMesh: 1
---- !u!1 &1897444729
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1897444730}
-  - component: {fileID: 1897444731}
-  m_Layer: 5
-  m_Name: CombatResolverSmokeTest
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1897444730
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1897444729}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2039180330}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1897444731
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1897444729}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 864961506d3295c45a18db1494fbff31, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CountdownAutoBattle.Gameplay.CombatResolverSmokeTest
-  runOnStart: 1
 --- !u!1 &1946259734
 GameObject:
   m_ObjectHideFlags: 0
@@ -7291,7 +7310,7 @@ RectTransform:
   - {fileID: 1316529551}
   - {fileID: 1410357036}
   - {fileID: 279794026}
-  - {fileID: 1897444730}
+  - {fileID: 1337575816}
   m_Father: {fileID: 1682141378}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}

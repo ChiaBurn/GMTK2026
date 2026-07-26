@@ -9,15 +9,10 @@ namespace CountdownAutoBattle.Core
 {
     /// <summary>
     /// 控制單一關卡的主要階段與中央主按鈕。
-    ///
-    /// 流程：
-    /// BeforeDraw
-    /// → Configuration
-    /// → Combat
-    /// → Result
     /// </summary>
     [DisallowMultipleComponent]
-    public sealed class GameFlowController : MonoBehaviour
+    public sealed class GameFlowController :
+        MonoBehaviour
     {
         [Header("References")]
         [SerializeField]
@@ -27,7 +22,11 @@ namespace CountdownAutoBattle.Core
         private TMP_Text primaryButtonLabel;
 
         [SerializeField]
-        private CardDrawController cardDrawController;
+        private CardDrawController
+            cardDrawController;
+
+        [SerializeField]
+        private CombatController combatController;
 
         [Header("Runtime State")]
         [SerializeField]
@@ -50,6 +49,12 @@ namespace CountdownAutoBattle.Core
                 primaryButton.onClick.AddListener(
                     HandlePrimaryButtonClicked);
             }
+
+            if (combatController != null)
+            {
+                combatController.CombatFinished +=
+                    HandleCombatFinished;
+            }
         }
 
         private void Start()
@@ -63,6 +68,12 @@ namespace CountdownAutoBattle.Core
             {
                 primaryButton.onClick.RemoveListener(
                     HandlePrimaryButtonClicked);
+            }
+
+            if (combatController != null)
+            {
+                combatController.CombatFinished -=
+                    HandleCombatFinished;
             }
         }
 
@@ -83,10 +94,11 @@ namespace CountdownAutoBattle.Core
                     break;
 
                 default:
-                    throw new ArgumentOutOfRangeException(
-                        nameof(currentPhase),
-                        currentPhase,
-                        null);
+                    throw new
+                        ArgumentOutOfRangeException(
+                            nameof(currentPhase),
+                            currentPhase,
+                            null);
             }
         }
 
@@ -118,19 +130,25 @@ namespace CountdownAutoBattle.Core
 
         private void BeginCombat()
         {
-            /*
-             * 本階段先切換至 Combat 並鎖定配置操作。
-             * 下一階段會由 CombatController 啟動自動戰鬥。
-             */
             SetPhase(GamePhase.Combat);
 
+            combatController?.StartCombat();
+        }
+
+        private void HandleCombatFinished(
+            bool playerWon)
+        {
+            SetPhase(GamePhase.Result);
+
             Debug.Log(
-                "Combat phase entered. " +
-                "Automatic combat is not implemented yet.",
+                playerWon
+                    ? "Flow entered Result: WIN."
+                    : "Flow entered Result: LOSE.",
                 this);
         }
 
-        private void SetPhase(GamePhase nextPhase)
+        private void SetPhase(
+            GamePhase nextPhase)
         {
             currentPhase = nextPhase;
 
@@ -138,11 +156,13 @@ namespace CountdownAutoBattle.Core
             PhaseChanged?.Invoke(nextPhase);
 
             Debug.Log(
-                $"Game phase changed to: {nextPhase}",
+                $"Game phase changed to: " +
+                $"{nextPhase}",
                 this);
         }
 
-        private void ApplyPhaseState(GamePhase phase)
+        private void ApplyPhaseState(
+            GamePhase phase)
         {
             switch (phase)
             {
@@ -165,6 +185,10 @@ namespace CountdownAutoBattle.Core
                     break;
 
                 case GamePhase.Combat:
+                    /*
+                     * CombatController 會直接更新
+                     * 同一個文字元件為回合數。
+                     */
                     SetPrimaryButton(
                         label: "0",
                         interactable: false,
@@ -183,10 +207,11 @@ namespace CountdownAutoBattle.Core
                     break;
 
                 default:
-                    throw new ArgumentOutOfRangeException(
-                        nameof(phase),
-                        phase,
-                        null);
+                    throw new
+                        ArgumentOutOfRangeException(
+                            nameof(phase),
+                            phase,
+                            null);
             }
         }
 
@@ -200,12 +225,16 @@ namespace CountdownAutoBattle.Core
                 return;
             }
 
-            primaryButton.gameObject.SetActive(visible);
-            primaryButton.interactable = interactable;
+            primaryButton.gameObject
+                .SetActive(visible);
+
+            primaryButton.interactable =
+                interactable;
 
             if (primaryButtonLabel != null)
             {
-                primaryButtonLabel.text = label;
+                primaryButtonLabel.text =
+                    label;
             }
         }
 
@@ -215,7 +244,8 @@ namespace CountdownAutoBattle.Core
             if (CardPlacementService.Instance == null)
             {
                 Debug.LogWarning(
-                    "CardPlacementService instance is unavailable.");
+                    "CardPlacementService instance " +
+                    "is unavailable.");
 
                 return;
             }
@@ -244,6 +274,13 @@ namespace CountdownAutoBattle.Core
             {
                 Debug.LogError(
                     "Card Draw Controller is not assigned.",
+                    this);
+            }
+
+            if (combatController == null)
+            {
+                Debug.LogError(
+                    "Combat Controller is not assigned.",
                     this);
             }
         }

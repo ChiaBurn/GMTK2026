@@ -31,13 +31,32 @@ namespace CountdownAutoBattle.UI
         [SerializeField]
         private TMP_Text cycleValueText;
 
-        public EquipmentDefinition Definition => definition;
+        [Header("Ordering")]
+        [SerializeField, Min(0)]
+        private int displayOrder;
+
+        public EquipmentDefinition Definition =>
+            definition;
+
+        public IReadOnlyList<CardSlotView> Slots =>
+            slots;
+
+        public int DisplayOrder =>
+            displayOrder;
 
         public bool IsActivated { get; private set; }
 
-        public int CurrentEffectValue { get; private set; }
+        public int CurrentEffectValue
+        {
+            get;
+            private set;
+        }
 
-        public int CurrentCycleValue { get; private set; }
+        public int CurrentCycleValue
+        {
+            get;
+            private set;
+        }
 
         private void Awake()
         {
@@ -52,7 +71,8 @@ namespace CountdownAutoBattle.UI
             {
                 if (slot != null)
                 {
-                    slot.CardChanged += HandleSlotCardChanged;
+                    slot.CardChanged +=
+                        HandleSlotCardChanged;
                 }
             }
 
@@ -65,12 +85,66 @@ namespace CountdownAutoBattle.UI
             {
                 if (slot != null)
                 {
-                    slot.CardChanged -= HandleSlotCardChanged;
+                    slot.CardChanged -=
+                        HandleSlotCardChanged;
                 }
             }
         }
 
-        private void HandleSlotCardChanged(CardSlotView changedSlot)
+        public PendingEffect CreatePendingEffect()
+        {
+            if (!IsActivated || definition == null)
+            {
+                return null;
+            }
+
+            CombatEffectType combatEffectType =
+                definition.EffectType switch
+                {
+                    EquipmentEffectType.Shield =>
+                        CombatEffectType.Shield,
+
+                    EquipmentEffectType.Attack =>
+                        CombatEffectType.Attack,
+
+                    EquipmentEffectType.Heal =>
+                        CombatEffectType.Heal,
+
+                    _ => throw new
+                        System.ArgumentOutOfRangeException()
+                };
+
+            CombatSide targetSide =
+                combatEffectType ==
+                CombatEffectType.Attack
+                    ? CombatSide.Enemy
+                    : CombatSide.Player;
+
+            return new PendingEffect(
+                sourceId:
+                    definition.EquipmentId,
+
+                sourceDisplayName:
+                    definition.DisplayName,
+
+                sourceSide:
+                    CombatSide.Player,
+
+                targetSide:
+                    targetSide,
+
+                effectType:
+                    combatEffectType,
+
+                value:
+                    CurrentEffectValue,
+
+                sourceOrder:
+                    displayOrder);
+        }
+
+        private void HandleSlotCardChanged(
+            CardSlotView changedSlot)
         {
             RefreshCalculatedValues();
         }
@@ -84,7 +158,8 @@ namespace CountdownAutoBattle.UI
 
             if (nameText != null)
             {
-                nameText.text = definition.DisplayName;
+                nameText.text =
+                    definition.DisplayName;
             }
 
             if (formulaText != null)
@@ -96,8 +171,9 @@ namespace CountdownAutoBattle.UI
 
         private void RefreshCalculatedValues()
         {
-            IsActivated = TryGetCardValues(
-                out List<int> values);
+            IsActivated =
+                TryGetCardValues(
+                    out List<int> values);
 
             if (!IsActivated)
             {
@@ -124,7 +200,8 @@ namespace CountdownAutoBattle.UI
                         values);
 
             CurrentCycleValue =
-                MathUtility.LeastCommonMultiple(values);
+                MathUtility
+                    .LeastCommonMultiple(values);
 
             if (effectValueText != null)
             {
@@ -142,10 +219,12 @@ namespace CountdownAutoBattle.UI
         private bool TryGetCardValues(
             out List<int> values)
         {
-            values = new List<int>(slots.Count);
+            values =
+                new List<int>(slots.Count);
 
             if (definition == null ||
-                slots.Count != definition.SlotCount)
+                slots.Count !=
+                definition.SlotCount)
             {
                 return false;
             }
@@ -161,7 +240,8 @@ namespace CountdownAutoBattle.UI
                 }
 
                 values.Add(
-                    slot.CurrentCard.CardData.Value);
+                    slot.CurrentCard
+                        .CardData.Value);
             }
 
             return true;
@@ -178,12 +258,13 @@ namespace CountdownAutoBattle.UI
                 return;
             }
 
-            if (slots.Count != definition.SlotCount)
+            if (slots.Count !=
+                definition.SlotCount)
             {
                 Debug.LogError(
-                    $"Equipment '{definition.DisplayName}' expects " +
-                    $"{definition.SlotCount} slots, but the view has " +
-                    $"{slots.Count}.",
+                    $"Equipment '{definition.DisplayName}' " +
+                    $"expects {definition.SlotCount} slots, " +
+                    $"but the view has {slots.Count}.",
                     this);
             }
         }

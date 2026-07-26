@@ -9,11 +9,14 @@ namespace CountdownAutoBattle.UI
     /// <summary>
     /// 點數卡的 UI View。
     ///
-    /// 負責：
-    /// - 顯示點數卡資料
-    /// - 點擊選取
-    /// - 拖曳操作
-    /// - 根據遊戲階段啟用或停用互動
+    /// 配置階段：
+    /// - 顯示單一初始點數。
+    /// - 支援點擊、拖曳與交換。
+    ///
+    /// 戰鬥階段：
+    /// - 大字顯示目前倒數值。
+    /// - 小字顯示初始點數。
+    /// - CurrentValue 為 1 時顯示黃色。
     /// </summary>
     [DisallowMultipleComponent]
     [RequireComponent(typeof(RectTransform))]
@@ -30,7 +33,22 @@ namespace CountdownAutoBattle.UI
         private TMP_Text valueText;
 
         [SerializeField]
+        private TMP_Text baseValueText;
+
+        [SerializeField]
         private Image background;
+
+        [Header("Display Colors")]
+        [SerializeField]
+        private Color normalColor = Color.white;
+
+        [SerializeField]
+        private Color selectedColor =
+            new(1f, 0.82f, 0.25f, 1f);
+
+        [SerializeField]
+        private Color countdownReadyColor =
+            new(1f, 0.85f, 0.2f, 1f);
 
         private PointCardInstance cardData;
 
@@ -43,6 +61,8 @@ namespace CountdownAutoBattle.UI
 
         private bool isInteractionEnabled = true;
         private bool isDragging;
+        private bool isSelected;
+        private bool isCombatDisplay;
 
         public PointCardInstance CardData => cardData;
 
@@ -50,7 +70,8 @@ namespace CountdownAutoBattle.UI
 
         public CardSlotView CurrentSlot => currentSlot;
 
-        public bool IsInteractionEnabled => isInteractionEnabled;
+        public bool IsInteractionEnabled =>
+            isInteractionEnabled;
 
         private void Awake()
         {
@@ -64,7 +85,13 @@ namespace CountdownAutoBattle.UI
 
             if (valueText == null)
             {
-                valueText = GetComponentInChildren<TMP_Text>();
+                TMP_Text[] texts =
+                    GetComponentsInChildren<TMP_Text>(true);
+
+                if (texts.Length > 0)
+                {
+                    valueText = texts[0];
+                }
             }
 
             Canvas parentCanvas =
@@ -74,6 +101,8 @@ namespace CountdownAutoBattle.UI
             {
                 rootCanvas = parentCanvas.rootCanvas;
             }
+
+            ApplyBackgroundColor();
         }
 
         public void Bind(PointCardInstance data)
@@ -88,17 +117,7 @@ namespace CountdownAutoBattle.UI
             }
 
             cardData = data;
-
-            if (valueText == null)
-            {
-                Debug.LogError(
-                    "PointCardView requires a TMP_Text reference.",
-                    this);
-
-                return;
-            }
-
-            valueText.text = data.Value.ToString();
+            ShowConfigurationValue();
         }
 
         public void SetCurrentSlot(CardSlotView slot)
@@ -108,24 +127,14 @@ namespace CountdownAutoBattle.UI
 
         public void SetSelected(bool selected)
         {
-            if (background == null)
-            {
-                return;
-            }
-
-            background.color = selected
-                ? new Color(1f, 0.82f, 0.25f, 1f)
-                : Color.white;
+            isSelected = selected;
+            ApplyBackgroundColor();
         }
 
         public void SetInteractionEnabled(bool enabled)
         {
             isInteractionEnabled = enabled;
 
-            /*
-             * 若切換階段時正在拖曳，
-             * 強制將卡片放回原始槽位。
-             */
             if (!enabled && isDragging)
             {
                 ReturnToOriginSlot();
@@ -135,7 +144,53 @@ namespace CountdownAutoBattle.UI
             canvasGroup.alpha = 1f;
         }
 
-        public void OnPointerClick(PointerEventData eventData)
+        /// <summary>
+        /// 配置階段顯示：只顯示卡片原始點數。
+        /// </summary>
+        public void ShowConfigurationValue()
+        {
+            isCombatDisplay = false;
+
+            if (valueText != null && cardData != null)
+            {
+                valueText.text =
+                    cardData.Value.ToString();
+            }
+
+            if (baseValueText != null)
+            {
+                baseValueText.gameObject.SetActive(false);
+            }
+
+            ApplyBackgroundColor();
+        }
+
+        /// <summary>
+        /// 戰鬥階段顯示目前倒數值及原始點數。
+        /// </summary>
+        public void ShowCombatCountdown(int currentValue)
+        {
+            isCombatDisplay = true;
+
+            if (valueText != null)
+            {
+                valueText.text =
+                    currentValue.ToString();
+            }
+
+            if (baseValueText != null && cardData != null)
+            {
+                baseValueText.gameObject.SetActive(true);
+                baseValueText.text =
+                    cardData.Value.ToString();
+            }
+
+            bool isReady = currentValue == 1;
+            ApplyBackgroundColor(isReady);
+        }
+
+        public void OnPointerClick(
+            PointerEventData eventData)
         {
             if (!isInteractionEnabled)
             {
@@ -152,7 +207,8 @@ namespace CountdownAutoBattle.UI
                 .HandleCardClicked(this);
         }
 
-        public void OnBeginDrag(PointerEventData eventData)
+        public void OnBeginDrag(
+            PointerEventData eventData)
         {
             if (!isInteractionEnabled)
             {
@@ -202,11 +258,13 @@ namespace CountdownAutoBattle.UI
 
             if (converted)
             {
-                rectTransform.localPosition = localPoint;
+                rectTransform.localPosition =
+                    localPoint;
             }
         }
 
-        public void OnEndDrag(PointerEventData eventData)
+        public void OnEndDrag(
+            PointerEventData eventData)
         {
             if (!isDragging)
             {
@@ -216,11 +274,6 @@ namespace CountdownAutoBattle.UI
             canvasGroup.blocksRaycasts = true;
             canvasGroup.alpha = 1f;
 
-            /*
-             * 若沒有成功被其他槽位接收，
-             * CurrentSlot 仍會是原始槽位，
-             * 此時把卡片重新放回原位。
-             */
             if (currentSlot == dragOriginSlot ||
                 currentSlot == null)
             {
@@ -247,6 +300,25 @@ namespace CountdownAutoBattle.UI
 
             dragOriginSlot = null;
             isDragging = false;
+        }
+
+        private void ApplyBackgroundColor(
+            bool countdownReady = false)
+        {
+            if (background == null)
+            {
+                return;
+            }
+
+            if (isSelected && !isCombatDisplay)
+            {
+                background.color = selectedColor;
+                return;
+            }
+
+            background.color = countdownReady
+                ? countdownReadyColor
+                : normalColor;
         }
     }
 }
